@@ -1,13 +1,70 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+a:focus,
+a:hover,
+a:visited,
+a:link,
+a:active {
+  text-decoration: none;
 }
+main {
+  min-height: 80vh;
+}
+
+/* Form css start */
+.form-field {
+  margin: 50px;
+  border: 2px solid #c4c2c2;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 10px 10px 20px 10px;
+}
+form p {
+  margin: 10px;
+}
+input[type='text'],
+[type='email'],
+[type='password'] {
+  width: 320px;
+  outline: none;
+  padding: 6px 8px;
+  border-radius: 3px;
+  border: 1px solid #ededed;
+}
+input,
+select,
+textarea {
+  background-color: none !important;
+}
+input[type='submit'] {
+  width: 320px;
+  padding: 6px 16px;
+  border-radius: 3px;
+  border: none;
+  border-bottom: 3px solid white;
+  font-size: bold;
+  background-color: #275A53;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+}
+.sign-btn {
+  background-color: transparent;
+  width: 320px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid gray;
+  outline: none;
+}
+.divider {
+  border: 1px solid gray;
+  width: 150px;
+}
+.login-qstn{
+    font-size: 12px;
+}
+/* Form css end */
