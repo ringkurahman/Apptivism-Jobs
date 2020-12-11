@@ -1,10 +1,10 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyDvIe7x2Ycj_9JHU8jp-T1WMHe4O2_c0HQ",
-  authDomain: "apptivism-jobs.firebaseapp.com",
-  projectId: "apptivism-jobs",
-  storageBucket: "apptivism-jobs.appspot.com",
-  messagingSenderId: "285314912167",
-  appId: "1:285314912167:web:86a8939ff9329a0466f082"
+  apiKey: "AIzaSyC48eqR3PMmP7Urprv3COsbHpuSPZ8lLnY",
+  authDomain: "apptivism-jobs-884bd.firebaseapp.com",
+  projectId: "apptivism-jobs-884bd",
+  storageBucket: "apptivism-jobs-884bd.appspot.com",
+  messagingSenderId: "461225094442",
+  appId: "1:461225094442:web:d26725a3597163f7354253"
 }
 
 export default firebaseConfig

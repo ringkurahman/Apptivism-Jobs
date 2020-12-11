@@ -1,11 +1,11 @@
-import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import firebase from "firebase/app";
-import "firebase/auth";
-import React, { useContext, useState } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import { UserContext } from '../App';
-import firebaseConfig from '../components/login/firebase.config';
+import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import firebase from "firebase/app"
+import "firebase/auth"
+import React, { useContext, useState } from 'react'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import { UserContext } from '../App'
+import firebaseConfig from '../components/login/firebase.config'
 
 
 
@@ -54,8 +54,10 @@ const Login = () => {
                 setLogInUser(signInUser)
                 history.replace(from)
             })
-            .catch(err => {
-            console.log(err.message)
+            .catch(error => {
+                const newUserInfo = { ...user }
+                newUserInfo.error = error.message
+                setUser(newUserInfo)
         })
     }
 
@@ -70,6 +72,7 @@ const Login = () => {
                     photo: '',
                 }
                 setUser(signOutUser)
+                setLogInUser(signOutUser)
             })
             .catch(err => {
             
@@ -81,14 +84,11 @@ const Login = () => {
 
     // Facebook sign in handler
     const handleFbSignIn = () => {
-        // Open google pop up
+        // Open facebook pop up
         firebase.auth().signInWithPopup(FbProvider)
             .then(result => {
                 const token = result.credential.accessToken
-                console.log('Token: ', token)
-                const user = result.user
-                console.log('user: ', user)
-                const { displayName, email, photoURL } = user
+                const { displayName, email, photoURL } = result.user
                 // State for sign in user
                 const signInUser = {
                     isSignedIn: true,
@@ -98,11 +98,12 @@ const Login = () => {
                 }
                 setUser(signInUser)
                 setLogInUser(signInUser)
-                // history.replace(from)
+                history.replace(from)
             })
-            .catch(err => {
-                const errorMessage = err.message
-                console.log(err.message)
+            .catch(error => {
+                const newUserInfo = { ...user }
+                newUserInfo.error = error.message
+                setUser(newUserInfo)
         })
     }
 
@@ -132,7 +133,7 @@ const Login = () => {
     // Form submit handler
     const handleSubmit = (e) => {
         // Sign Up with email and password
-        if (user.name && user.email && user.password) {
+        if (newUser && user.name && user.email && user.password) {
             firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
                 .then( user => {
                     const newUserInfo = { ...user }
@@ -149,7 +150,7 @@ const Login = () => {
                 })
         }
         // Log In with email and password
-        if (user.email && user.password) {
+        if (!newUser && user.email && user.password) {
             firebase.auth().signInWithEmailAndPassword(user.email, user.password)
                 .then((user) => {
                     const newUserInfo = { ...user }
@@ -172,10 +173,6 @@ const Login = () => {
     return (
         <div className="container">
             <div className='text-center'>
-                {
-                    user.isSignedIn ? <button className='sign-btn' onClick={handleSignOut}>Sign Out</button> :
-                    <button className='sign-btn' onClick={handleGoogleSignIn}>Sign In</button>
-                }
                 {!newUser && (
                     <form  onSubmit={handleSubmit}>
                         <div className='form-field p-4'>
@@ -297,6 +294,12 @@ const Login = () => {
                 )}
                 {user.success &&
                     <p style={{ color: 'yellow' }}>Successfully login</p>
+                }
+                {user.SignUpSuccess &&
+                    <div>
+                        <p style={{ color: 'yellow' }}>Account successfully created</p>
+                        <p style={{ color: 'yellow' }}>Login your account</p>
+                    </div>
                 }
                 {user.error ? <p style={{ color: 'red' }}>{user.error}</p> : null
                 }
