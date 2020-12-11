@@ -48,7 +48,7 @@ export const handleFbSignIn = () => {
         .then(result => {
             const token = result.credential.accessToken
             const { displayName, email, photoURL } = result.user
-                // State for sign in user
+            // State for sign in user
             const signInUser = {
                 isSignedIn: true,
                 name: displayName,
@@ -59,6 +59,33 @@ export const handleFbSignIn = () => {
             return signInUser
         })
         .catch(error => {
+            const newUserInfo = { }
+            newUserInfo.error = error.message
+            newUserInfo.success = false
+            return newUserInfo
+        })
+}
+
+// GitHub sign in handler
+export const handleGitHubSignIn = () => {
+    // Set github provider
+    const gitHubProvider = new firebase.auth.GithubAuthProvider()
+    // Open GitHub pop up
+    return firebase.auth().signInWithPopup(gitHubProvider)
+        .then(result => {
+            const token = result.credential.accessToken
+            const { displayName, email, photoURL } = result.user
+            // State for sign in user
+            const signInUser = {
+                isSignedIn: true,
+                name: displayName,
+                email: email,
+                photo: photoURL, 
+                success: true,
+            }
+            return signInUser
+        })
+        .catch(function (error) {
             const newUserInfo = { }
             newUserInfo.error = error.message
             newUserInfo.success = false

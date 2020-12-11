@@ -1,9 +1,9 @@
-import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { faFacebook, faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useContext, useState } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { UserContext } from '../App'
-import { createUserWithEmailAndPassword, handleFbSignIn, handleGoogleSignIn, initializeLoginFramework, signInWithEmailAndPassword } from '../components/login/LogInManager'
+import { createUserWithEmailAndPassword, handleFbSignIn, handleGitHubSignIn, handleGoogleSignIn, initializeLoginFramework, signInWithEmailAndPassword } from '../components/login/LogInManager'
 
 
 
@@ -41,6 +41,15 @@ const Login = () => {
     // Facebook sign in event handler
     const fbLogIn = () => {
         handleFbSignIn()
+            .then((res) => {
+                setUser(res)
+                handleResponse(res, true)
+            })
+    }
+
+    // GitHub sign in event handler
+    const gitHubLogIn = () => {
+        handleGitHubSignIn()
             .then((res) => {
                 setUser(res)
                 handleResponse(res, true)
@@ -248,7 +257,7 @@ const Login = () => {
                             </div>
                         </button>
                     </div>
-                    <div>
+                    <div className='mb-2'>
                         <button className='sign-btn' onClick={googleSignIn}>
                             <div className='d-flex justify-content-between align-items-center'>
                             <FontAwesomeIcon className='text-white' icon={faGoogle} style={{fontSize: '30px'}} />
@@ -256,6 +265,14 @@ const Login = () => {
                             </div>
                         </button>
                 </div>
+                <div>
+                        <button className='sign-btn' onClick={gitHubLogIn}>
+                            <div className='d-flex justify-content-between align-items-center'>
+                            <FontAwesomeIcon className='text-white' icon={faGithub} style={{fontSize: '30px'}} />
+                            <span className='text-white ml-5'>Continue with GitHub</span>
+                            </div>
+                        </button>
+                    </div>
             </div>
         </div>
     )
