@@ -29,11 +29,11 @@ const Header = () => {
             <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
                 {
-                  loggedInUser && <Nav.Link href="/">{ loggedInUser.name }</Nav.Link>
+                  loggedInUser.name && <Nav.Link href="/">Welcome { loggedInUser.name }</Nav.Link>
                 }
                 
                 {
-                  loggedInUser.name && <Nav.Link href="/"><button onClick={signOut}>Sign Out</button></Nav.Link>
+                  loggedInUser.name && <Nav.Link href="/"><button onClick={signOut} style={{border: 'none', background: 'none'}}>Sign Out</button></Nav.Link>
                 }
             </Nav>
           </Navbar.Collapse>
