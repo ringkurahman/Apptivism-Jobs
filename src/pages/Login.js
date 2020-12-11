@@ -1,24 +1,13 @@
 import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import firebase from "firebase/app"
-import "firebase/auth"
 import React, { useContext, useState } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { UserContext } from '../App'
-import firebaseConfig from '../components/login/firebase.config'
+import { createUserWithEmailAndPassword, handleFbSignIn, handleGoogleSignIn, initializeLoginFramework, signInWithEmailAndPassword } from '../components/login/LogInManager'
 
-
-
-// 1st Initialize Firebase
-firebase.initializeApp(firebaseConfig)
 
 
 const Login = () => {
-
-    const [loggedInUser, setLogInUser] = useContext(UserContext)
-    const history = useHistory()
-    const location = useLocation()
-    const { from } = location.state || { from: { pathname: '/dashboard' }, }
 
     // State for new user
     const [newUser, setNewUser] = useState(false);
@@ -34,77 +23,37 @@ const Login = () => {
         error: '',
     })
 
-    // Set google provider
-    const googleProvider = new firebase.auth.GoogleAuthProvider()
+    // Call firebase authentication function from LogInManager.js
+    initializeLoginFramework()
 
-    // Google sign in handler
-    const handleGoogleSignIn = () => {
-        // Open google pop up
-        firebase.auth().signInWithPopup(googleProvider)
-            .then( result => {
-                const { displayName, email, photoURL } = result.user
-                // State for sign in user
-                const signInUser = {
-                    isSignedIn: true,
-                    name: displayName,
-                    email: email,
-                    photo: photoURL,
-                }
-                setUser(signInUser)
-                setLogInUser(signInUser)
-                history.replace(from)
-            })
-            .catch(error => {
-                const newUserInfo = { ...user }
-                newUserInfo.error = error.message
-                setUser(newUserInfo)
+    const [loggedInUser, setLogInUser] = useContext(UserContext)
+    const history = useHistory()
+    const location = useLocation()
+    const { from } = location.state || { from: { pathname: '/dashboard' }, }
+
+    // Google sign in event handler
+    const googleSignIn = () => {
+        handleGoogleSignIn().then((res) => {
+        handleResponse(res, true)
         })
     }
 
-    // Google sign out handler
-    const handleSignOut = () => {
-        firebase.auth().signOut()
-            .then(result => {
-                const signOutUser = {
-                    isSignedIn: false,
-                    name: '',
-                    email: '',
-                    photo: '',
-                }
-                setUser(signOutUser)
-                setLogInUser(signOutUser)
+    // Facebook sign in event handler
+    const fbLogIn = () => {
+        handleFbSignIn()
+            .then((res) => {
+                setUser(res)
+                handleResponse(res, true)
             })
-            .catch(err => {
-            
-        })
     }
 
-    // Set facebook provider
-    const FbProvider = new firebase.auth.FacebookAuthProvider()
-
-    // Facebook sign in handler
-    const handleFbSignIn = () => {
-        // Open facebook pop up
-        firebase.auth().signInWithPopup(FbProvider)
-            .then(result => {
-                const token = result.credential.accessToken
-                const { displayName, email, photoURL } = result.user
-                // State for sign in user
-                const signInUser = {
-                    isSignedIn: true,
-                    name: displayName,
-                    email: email,
-                    photo: photoURL,
-                }
-                setUser(signInUser)
-                setLogInUser(signInUser)
-                history.replace(from)
-            })
-            .catch(error => {
-                const newUserInfo = { ...user }
-                newUserInfo.error = error.message
-                setUser(newUserInfo)
-        })
+    // Create response function
+    const handleResponse = (res, redirect) => {
+        setUser(res)
+        setLogInUser(res)
+        if (redirect) {
+        history.replace(from)
+        }
     }
 
     // Catch event when field is blur
@@ -134,41 +83,23 @@ const Login = () => {
     const handleSubmit = (e) => {
         // Sign Up with email and password
         if (newUser && user.name && user.email && user.password) {
-            firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
-                .then( user => {
-                    const newUserInfo = { ...user }
-                    newUserInfo.SignUpSuccess = true
-                    newUserInfo.error = ''
-                    setUser(newUserInfo)
-                    setLogInUser(newUserInfo)
-                })
-                .catch(error => {
-                    const newUserInfo = { ...user }
-                    newUserInfo.error = error.message
-                    newUserInfo.SignUpSuccess = false
-                    setUser(newUserInfo)
-                })
+            createUserWithEmailAndPassword(user.name, user.email, user.password)
+                .then((res) => {
+                // Call response handler from below function
+                handleResponse(res, true)
+            })
         }
         // Log In with email and password
         if (!newUser && user.email && user.password) {
-            firebase.auth().signInWithEmailAndPassword(user.email, user.password)
-                .then((user) => {
-                    const newUserInfo = { ...user }
-                    newUserInfo.success = true
-                    newUserInfo.error = ''
-                    setUser(newUserInfo)
-                    setLogInUser(newUserInfo)
-                    history.replace(from)
-                })
-                .catch(error => {
-                    const newUserInfo = { ...user }
-                    newUserInfo.error = error.message
-                    newUserInfo.success = false
-                    setUser(newUserInfo)
-                })
+            signInWithEmailAndPassword(user.email, user.password)
+                .then((res) => {
+                // Call response handler from below function
+                handleResponse(res, true)
+            })
          }
         e.preventDefault()
     }
+
 
     return (
         <div className="container">
@@ -310,7 +241,7 @@ const Login = () => {
                         <p className='divider'></p>
                     </div>
                     <div className='mb-2 mt-3'>
-                        <button className='sign-btn' onClick={handleFbSignIn}>
+                        <button className='sign-btn' onClick={fbLogIn}>
                             <div className='d-flex justify-content-between align-items-center'>
                             <FontAwesomeIcon className='text-white' icon={faFacebook} style={{fontSize: '30px'}} />
                             <span className='text-white ml-5'>Continue with Facebook</span>
@@ -318,7 +249,7 @@ const Login = () => {
                         </button>
                     </div>
                     <div>
-                        <button className='sign-btn' onClick={handleGoogleSignIn}>
+                        <button className='sign-btn' onClick={googleSignIn}>
                             <div className='d-flex justify-content-between align-items-center'>
                             <FontAwesomeIcon className='text-white' icon={faGoogle} style={{fontSize: '30px'}} />
                             <span className='text-white ml-5'>Continue with Google</span>
