@@ -132,10 +132,15 @@ export const createUserWithEmailAndPassword = (name, email, password) => {
 export const signInWithEmailAndPassword = (email, password) => {
     return firebase.auth().signInWithEmailAndPassword(email, password)
         .then((response) => {
-            const newUserInfo = response.user
-            newUserInfo.success = true
-            newUserInfo.error = ''
-            return newUserInfo
+            const { displayName, email } = response.user
+            // State for sign in user
+            const signInUser = {
+                isSignedIn: true,
+                name: displayName,
+                email: email,
+                success: true,
+            }
+            return signInUser
         })
         .catch(error => {
             const newUserInfo = {}

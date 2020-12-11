@@ -94,16 +94,20 @@ const Login = () => {
         if (newUser && user.name && user.email && user.password) {
             createUserWithEmailAndPassword(user.name, user.email, user.password)
                 .then((res) => {
-                // Call response handler from below function
-                handleResponse(res, true)
+                    setUser(res)
+                    setLogInUser(res)
+                    // Call response handler from below function
+                    handleResponse(res, true)
             })
         }
         // Log In with email and password
         if (!newUser && user.email && user.password) {
             signInWithEmailAndPassword(user.email, user.password)
                 .then((res) => {
-                // Call response handler from below function
-                handleResponse(res, true)
+                    setUser(res)
+                    setLogInUser(res)
+                    // Call response handler from below function
+                    handleResponse(res, true)
             })
          }
         e.preventDefault()

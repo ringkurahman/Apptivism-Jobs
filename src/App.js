@@ -12,6 +12,7 @@ export const UserContext = createContext()
 
 const App = () => {
   
+  // Save Login User info to local storage.
   const [loggedInUser, setLogInUser] = useLocalStorageState('info', {})
 
   return (
